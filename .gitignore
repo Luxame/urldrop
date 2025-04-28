@@ -1,0 +1,37 @@
+# macOS 系統檔案
+.DS_Store
+
+# Node.js / Vite
+node_modules/
+dist/
+build/
+.vite/
+
+# Go
+bin/
+*.exe
+*.test
+*.out
+
+# Cloudflare Wrangler
+.wrangler/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE 設定 (例如 VSCode)
+.vscode/
+.idea/
+
+# 環境設定檔
+.env
+.env.local
+.env.production
+.env.development
+
+# Deploy artifacts
+output/
