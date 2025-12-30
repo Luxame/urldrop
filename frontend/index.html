@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urldrop - 社群追蹤碼清理工具</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "SF Pro Display", "Noto Sans TC", system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 2rem 1rem 4rem;
+        display: flex;
+        justify-content: center;
+        background: radial-gradient(
+          circle at 20% 20%,
+          rgba(120, 113, 255, 0.14),
+          transparent 40%
+        );
+      }
+
+      .app {
+        width: min(680px, 100%);
+        background: rgba(250, 250, 252, 0.85);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        color: #0f172a;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 1rem;
+        }
+
+        .app {
+          padding: 1.5rem;
+        }
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+      }
+
+      p {
+        color: #475569;
+        margin-top: 0.5rem;
+        line-height: 1.6;
+      }
+
+      label {
+        font-weight: 600;
+        display: block;
+        margin: 1.5rem 0 0.5rem;
+        color: #0f172a;
+      }
+
+      textarea,
+      input {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #cbd5f5;
+        padding: 1rem 1.1rem;
+        font-size: 1rem;
+        color: inherit;
+        background: white;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+      }
+
+      textarea:focus,
+      input:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+      }
+
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+
+      button {
+        flex: 1;
+        min-width: 140px;
+        border: none;
+        border-radius: 14px;
+        padding: 0.9rem 1.1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+
+      .primary {
+        background: linear-gradient(120deg, #6366f1, #8b5cf6);
+        color: white;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+      }
+
+      .neutral {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+
+      button:active {
+        transform: translateY(1px);
+        box-shadow: none;
+      }
+
+      .result {
+        margin-top: 1rem;
+        border-radius: 14px;
+        border: 1px dashed #cbd5f5;
+        padding: 1rem;
+        background: rgba(99, 102, 241, 0.05);
+        min-height: 3.2rem;
+        color: #0f172a;
+        font-size: 0.95rem;
+        word-break: break-word;
+      }
+
+      .result.empty {
+        color: #94a3b8;
+      }
+
+      .status {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #0f172a;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .chip {
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        font-size: 0.85rem;
+        color: #475569;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <h1>移除追蹤參數，讓連結更乾淨</h1>
+      <p>
+        貼上 IG、Threads、X、Facebook 等社群分享連結，我們會自動移除
+        utm、fbclid、gclid、xmt 這類追蹤碼，保留最純粹的網址。
+      </p>
+
+      <label for="inputUrl">貼上原始連結</label>
+      <textarea
+        id="inputUrl"
+        placeholder="https://www.threads.net/@example/post/abc123?xmt=..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="buttons">
+        <button class="primary" id="cleanBtn">清除追蹤參數</button>
+        <button class="neutral" id="copyBtn">複製整理後連結</button>
+      </div>
+
+      <section class="result empty" id="result">
+        等待輸入連結...
+      </section>
+      <div class="status" id="status"></div>
+
+      <div class="chips" aria-label="目前移除的常見參數">
+        <span class="chip">utm_source / medium / campaign</span>
+        <span class="chip">fbclid / gclid</span>
+        <span class="chip">xmt</span>
+        <span class="chip">igshid</span>
+        <span class="chip">si / ref / ref_url</span>
+        <span class="chip">spm / share_id</span>
+      </div>
+    </main>
+
+    <script src="./cleaner.js"></script>
+    <script>
+      const inputEl = document.getElementById("inputUrl");
+      const resultEl = document.getElementById("result");
+      const statusEl = document.getElementById("status");
+
+      const cleaner = window.urlCleaner;
+      if (!cleaner || typeof cleaner.cleanLink !== "function") {
+        throw new Error("URL 清理模組載入失敗");
+      }
+      const { cleanLink } = cleaner;
+
+      function renderResult(cleaned, removed) {
+        if (!cleaned) {
+          resultEl.textContent = "請先貼上要處理的連結";
+          resultEl.classList.add("empty");
+          statusEl.textContent = "";
+          return;
+        }
+        resultEl.textContent = cleaned;
+        resultEl.classList.remove("empty");
+        statusEl.textContent = removed.length
+          ? `已移除參數：${removed.join(", ")}`
+          : "沒有發現需要移除的追蹤參數";
+      }
+
+      document
+        .getElementById("cleanBtn")
+        .addEventListener("click", () => handleClean());
+
+      document
+        .getElementById("copyBtn")
+        .addEventListener("click", async () => {
+          const text = resultEl.classList.contains("empty")
+            ? ""
+            : resultEl.textContent;
+          if (!text) {
+            statusEl.textContent = "沒有可複製的內容";
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(text);
+            statusEl.textContent = "已複製到剪貼簿";
+          } catch (error) {
+            console.error(error);
+            statusEl.textContent = "瀏覽器阻擋了複製動作";
+          }
+        });
+
+      function handleClean() {
+        try {
+          const { url, removed } = cleanLink(inputEl.value);
+          renderResult(url, removed);
+        } catch (error) {
+          resultEl.textContent = error.message;
+          resultEl.classList.remove("empty");
+          statusEl.textContent = "";
+        }
+      }
+    </script>
+  </body>
+</html>
