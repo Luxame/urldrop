@@ -33,6 +33,7 @@
       "hss",
       "xmt",
       "yclid",
+      "slof",
     ].map((key) => key.toLowerCase())
   );
 

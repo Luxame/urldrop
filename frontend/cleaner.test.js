@@ -37,6 +37,14 @@ test("自動補完整網址並保留非追蹤參數", () => {
   assert.deepStrictEqual(removed, ["igshid"]);
 });
 
+test("Threads slof 參數會被移除", () => {
+  const { url, removed } = cleanLink(
+    "https://www.threads.com/@foo/post/bar?slof=1&keep=1"
+  );
+  assert.strictEqual(url, "https://www.threads.com/@foo/post/bar?keep=1");
+  assert.deepStrictEqual(removed, ["slof"]);
+});
+
 test("遇到無效網址會拋出錯誤", () => {
   assert.throws(() => cleanLink("::::"), /無法辨識的網址/);
 });
