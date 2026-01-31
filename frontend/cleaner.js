@@ -38,6 +38,7 @@
   );
 
   const prefixRules = ["utm_", "pk_", "mc_", "ga_", "oly_", "vero_"];
+  const allowedProtocols = new Set(["http:", "https:"]);
 
   function shouldRemoveParam(name) {
     if (!name) return false;
@@ -82,6 +83,13 @@
     if (!parsed) {
       throw new Error("無法辨識的網址");
     }
+
+    if (!allowedProtocols.has(parsed.protocol)) {
+      throw new Error("不支援的網址協定");
+    }
+
+    parsed.username = "";
+    parsed.password = "";
 
     const removedParams = [];
     const params = parsed.searchParams;

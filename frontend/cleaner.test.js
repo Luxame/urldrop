@@ -48,3 +48,13 @@ test("Threads slof 參數會被移除", () => {
 test("遇到無效網址會拋出錯誤", () => {
   assert.throws(() => cleanLink("::::"), /無法辨識的網址/);
 });
+
+test("拒絕非 http/https 協定的網址", () => {
+  assert.throws(() => cleanLink("javascript:alert(1)"), /不支援的網址協定/);
+});
+
+test("清除嵌入帳號密碼資訊", () => {
+  const { url, removed } = cleanLink("https://user:secret@example.com/?utm_id=1");
+  assert.strictEqual(url, "https://example.com/");
+  assert.deepStrictEqual(removed, ["utm_id"]);
+});
