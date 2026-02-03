@@ -15,6 +15,12 @@
   }
   const { cleanLink } = cleaner;
 
+  function resetUI() {
+    resultEl.textContent = "等待輸入連結...";
+    resultEl.classList.add("empty");
+    statusEl.textContent = "";
+  }
+
   function renderResult(cleaned, removed) {
     if (!cleaned) {
       resultEl.textContent = "請先貼上要處理的連結";
@@ -32,6 +38,14 @@
   document
     .getElementById("cleanBtn")
     .addEventListener("click", () => handleClean());
+
+  document
+    .getElementById("clearBtn")
+    .addEventListener("click", () => {
+      inputEl.value = "";
+      resetUI();
+      inputEl.focus();
+    });
 
   document
     .getElementById("copyBtn")
