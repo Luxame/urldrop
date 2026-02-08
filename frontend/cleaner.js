@@ -13,6 +13,7 @@
       "msclkid",
       "mc_eid",
       "mc_cid",
+      "igsh",
       "igshid",
       "si",
       "s",

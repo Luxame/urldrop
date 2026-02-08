@@ -37,6 +37,14 @@ test("自動補完整網址並保留非追蹤參數", () => {
   assert.deepStrictEqual(removed, ["igshid"]);
 });
 
+test("移除 Instagram igsh 參數", () => {
+  const { url, removed } = cleanLink(
+    "https://www.instagram.com/p/DUa73Vljxdc/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==&keep=1"
+  );
+  assert.strictEqual(url, "https://www.instagram.com/p/DUa73Vljxdc/?keep=1");
+  assert.deepStrictEqual(removed, ["utm_source", "igsh"]);
+});
+
 test("Threads slof 參數會被移除", () => {
   const { url, removed } = cleanLink(
     "https://www.threads.com/@foo/post/bar?slof=1&keep=1"
