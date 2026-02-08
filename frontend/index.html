@@ -158,23 +158,29 @@
         utm、fbclid、gclid、xmt 這類追蹤碼，保留最純粹的網址。
       </p>
 
-      <label for="inputUrl">貼上原始連結</label>
-      <textarea
-        id="inputUrl"
-        placeholder="https://www.threads.net/@example/post/abc123?xmt=..."
-        spellcheck="false"
-      ></textarea>
+      <form id="cleanForm" autocomplete="off">
+        <label for="inputUrl">貼上原始連結</label>
+        <textarea
+          id="inputUrl"
+          placeholder="https://www.threads.net/@example/post/abc123?xmt=..."
+          spellcheck="false"
+        ></textarea>
 
-      <div class="buttons">
-        <button class="primary" id="cleanBtn" type="button">清除追蹤參數</button>
-        <button class="neutral" id="clearBtn" type="button">清空</button>
-        <button class="neutral" id="copyBtn" type="button">複製整理後連結</button>
-      </div>
+        <div class="buttons">
+          <button class="primary" id="cleanBtn" type="button">
+            清除追蹤參數
+          </button>
+          <button class="neutral" id="clearBtn" type="reset">清空</button>
+          <button class="neutral" id="copyBtn" type="button">
+            複製整理後連結
+          </button>
+        </div>
 
-      <section class="result empty" id="result">
-        等待輸入連結...
-      </section>
-      <div class="status" id="status"></div>
+        <section class="result empty" id="result">
+          等待輸入連結...
+        </section>
+        <div class="status" id="status"></div>
+      </form>
 
     </main>
 

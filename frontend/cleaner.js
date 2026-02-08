@@ -39,6 +39,31 @@
 
   const prefixRules = ["utm_", "pk_", "mc_", "ga_", "oly_", "vero_"];
   const allowedProtocols = new Set(["http:", "https:"]);
+  const maxRedirectDepth = 3;
+
+  const redirectRules = [
+    {
+      hosts: new Set(["l.facebook.com", "lm.facebook.com"]),
+      pathMatches: (pathname) => pathname === "/l.php",
+      params: ["u"],
+    },
+    {
+      hosts: new Set(["l.instagram.com"]),
+      pathMatches: () => true,
+      params: ["u"],
+    },
+    {
+      hosts: new Set([
+        "www.facebook.com",
+        "web.facebook.com",
+        "m.facebook.com",
+        "facebook.com",
+      ]),
+      pathMatches: (pathname) =>
+        pathname === "/sharer.php" || pathname === "/share.php",
+      params: ["u", "href", "url", "link"],
+    },
+  ];
 
   function shouldRemoveParam(name) {
     if (!name) return false;
@@ -73,41 +98,93 @@
     return cleaned.length ? `#${cleaned.join("&")}` : "";
   }
 
+  function decodeRedirectValue(value) {
+    if (!value) return "";
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  }
+
+  function extractRedirectTarget(parsed) {
+    const host = parsed.hostname.toLowerCase();
+    const pathname = parsed.pathname.toLowerCase();
+
+    for (const rule of redirectRules) {
+      if (!rule.hosts.has(host)) {
+        continue;
+      }
+
+      if (rule.pathMatches && !rule.pathMatches(pathname)) {
+        continue;
+      }
+
+      for (const param of rule.params) {
+        const value = parsed.searchParams.get(param);
+        if (value) {
+          return decodeRedirectValue(value).trim();
+        }
+      }
+
+      throw new Error("偵測到 FB/IG 跳轉網址但缺少目標參數");
+    }
+
+    return null;
+  }
+
   function cleanLink(raw) {
     const trimmed = raw ? raw.trim() : "";
     if (!trimmed) {
       return { url: "", removed: [] };
     }
 
-    const parsed = parseUrl(trimmed);
-    if (!parsed) {
-      throw new Error("無法辨識的網址");
-    }
-
-    if (!allowedProtocols.has(parsed.protocol)) {
-      throw new Error("不支援的網址協定");
-    }
-
-    parsed.username = "";
-    parsed.password = "";
-
+    let currentInput = trimmed;
     const removedParams = [];
-    const params = parsed.searchParams;
 
-    for (const [key] of params) {
-      if (shouldRemoveParam(key)) {
-        removedParams.push(key);
+    for (let depth = 0; depth <= maxRedirectDepth; depth += 1) {
+      const parsed = parseUrl(currentInput);
+      if (!parsed) {
+        throw new Error("無法辨識的網址");
       }
+
+      if (!allowedProtocols.has(parsed.protocol)) {
+        throw new Error("不支援的網址協定");
+      }
+
+      parsed.username = "";
+      parsed.password = "";
+
+      const params = parsed.searchParams;
+      const deletedThisRound = [];
+
+      for (const [key] of params) {
+        if (shouldRemoveParam(key)) {
+          deletedThisRound.push(key);
+          removedParams.push(key);
+        }
+      }
+
+      [...new Set(deletedThisRound)].forEach((key) => params.delete(key));
+
+      parsed.hash = removeTrackingFragment(parsed.hash);
+
+      const redirectTarget = extractRedirectTarget(parsed);
+      if (redirectTarget === null) {
+        return {
+          url: parsed.toString(),
+          removed: [...new Set(removedParams)],
+        };
+      }
+
+      if (!redirectTarget) {
+        throw new Error("偵測到 FB/IG 跳轉網址但未提供有效的目標連結");
+      }
+
+      currentInput = redirectTarget;
     }
 
-    [...new Set(removedParams)].forEach((key) => params.delete(key));
-
-    parsed.hash = removeTrackingFragment(parsed.hash);
-
-    return {
-      url: parsed.toString(),
-      removed: [...new Set(removedParams)],
-    };
+    throw new Error("跳轉層級過深，無法完成清理");
   }
 
   const api = {
