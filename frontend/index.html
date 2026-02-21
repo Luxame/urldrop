@@ -47,6 +47,10 @@
         .app {
           padding: 1.5rem;
         }
+
+        .app-header {
+          flex-direction: column;
+        }
       }
 
       h1 {
@@ -54,10 +58,46 @@
         font-size: clamp(1.8rem, 4vw, 2.4rem);
       }
 
+      .app-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        text-decoration: none;
+        color: #0f172a;
+        background: rgba(148, 163, 184, 0.2);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        border-radius: 999px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .github-link img {
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
+
+      .github-link:hover {
+        background: rgba(148, 163, 184, 0.3);
+      }
+
       p {
         color: #475569;
         margin-top: 0.5rem;
         line-height: 1.6;
+      }
+
+      .intro {
+        margin-top: 0.5rem;
       }
 
       label {
@@ -152,10 +192,26 @@
   </head>
   <body>
     <main class="app">
-      <h1>移除追蹤參數，讓連結更乾淨</h1>
-      <p>
-        貼上 IG、Threads、X、Facebook 等社群分享連結，我們會自動移除
-        utm、fbclid、gclid、xmt 這類追蹤碼，保留最純粹的網址。
+      <div class="app-header">
+        <h1>移除追蹤參數，讓連結更乾淨</h1>
+        <a
+          class="github-link"
+          href="https://github.com/Luxame/urldrop"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="前往 Urldrop GitHub 開源專案"
+          title="查看 GitHub 開源專案"
+        >
+          <img
+            src="https://github.githubassets.com/favicons/favicon.svg"
+            alt="GitHub 官方 icon"
+          />
+          <span>GitHub</span>
+        </a>
+      </div>
+      <p class="intro">
+        貼上 IG、Threads、X、Facebook 等社群分享連結，我們會自動移除 utm、fbclid、gclid、xmt
+        這類追蹤碼，保留最純粹的網址。
       </p>
 
       <form id="cleanForm" autocomplete="off">
