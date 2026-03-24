@@ -1,44 +1,13 @@
 (function (global) {
-  const trackingParameters = new Set(
-    [
-      "utm_source",
-      "utm_medium",
-      "utm_campaign",
-      "utm_term",
-      "utm_content",
-      "utm_id",
-      "fbclid",
-      "gclid",
-      "dclid",
-      "msclkid",
-      "mc_eid",
-      "mc_cid",
-      "igsh",
-      "igshid",
-      "si",
-      "s",
-      "spm",
-      "spm_id_from",
-      "ref",
-      "ref_url",
-      "ref_src",
-      "referrer",
-      "referral_code",
-      "share_id",
-      "share_from",
-      "share_link_id",
-      "ch",
-      "ch_id",
-      "mibextid",
-      "hss_channel",
-      "hss",
-      "xmt",
-      "yclid",
-      "slof",
-    ].map((key) => key.toLowerCase())
-  );
+  const config =
+    typeof module !== "undefined" && module.exports
+      ? require("./tracking-params.js")
+      : global.trackingConfig;
 
-  const prefixRules = ["utm_", "pk_", "mc_", "ga_", "oly_", "vero_"];
+  const trackingParameters = new Set(
+    config.parameters.map((key) => key.toLowerCase())
+  );
+  const prefixRules = config.prefixRules;
   const allowedProtocols = new Set(["http:", "https:"]);
   const maxRedirectDepth = 3;
 
