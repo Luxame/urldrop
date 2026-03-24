@@ -1,0 +1,10 @@
+{
+  "name": "urldrop",
+  "version": "1.0.0",
+  "description": "簡單、快速的網址清理工具，移除社群分享連結中的追蹤參數",
+  "private": true,
+  "scripts": {
+    "test": "node --test frontend/cleaner.test.js frontend/app.test.js"
+  },
+  "license": "MIT"
+}
