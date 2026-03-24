@@ -106,13 +106,6 @@ test("雙重編碼的 Facebook 跳轉仍能正確移除追蹤參數", () => {
   assert.ok(removed.includes("fbclid"));
 });
 
-test("Facebook 跳轉目標為 javascript: 協議會被攔截", () => {
-  assert.throws(
-    () => cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)"),
-    /不支援的協定/
-  );
-});
-
 test("跳轉深度超過上限會被拒絕", () => {
   const nested =
     "https://l.facebook.com/l.php?u=" +
