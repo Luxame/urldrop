@@ -129,3 +129,41 @@ test("拒絕 data: 協議的網址", () => {
 test("拒絕 ftp: 協議的網址", () => {
   assert.throws(() => cleanLink("ftp://files.example.com/secret.txt"), /不支援的網址協定/);
 });
+
+test("接近長度上限的 URL 能正常處理", () => {
+  const longParam = "a".repeat(8000);
+  const { url } = cleanLink(`https://example.com/?keep=${longParam}&utm_source=x`);
+  assert.strictEqual(url, `https://example.com/?keep=${longParam}`);
+});
+
+test("Unicode / IDN 網域名稱能正常清理", () => {
+  const { url, removed } = cleanLink("https://例え.jp/path?utm_source=tw&keep=1");
+  assert.ok(url.includes("keep=1"));
+  assert.ok(!url.includes("utm_source"));
+  assert.deepStrictEqual(removed, ["utm_source"]);
+});
+
+test("參數值包含特殊字元不影響清理", () => {
+  const { url, removed } = cleanLink(
+    "https://example.com/?q=hello%20world%26foo%3Dbar&utm_medium=social&tag=a%23b"
+  );
+  assert.ok(url.includes("q=hello"));
+  assert.ok(url.includes("tag=a"));
+  assert.ok(!url.includes("utm_medium"));
+  assert.deepStrictEqual(removed, ["utm_medium"]);
+});
+
+test("參數值包含中文能正常保留", () => {
+  const { url, removed } = cleanLink(
+    "https://example.com/search?q=台北美食&fbclid=abc123"
+  );
+  assert.ok(url.includes(encodeURIComponent("台北美食")) || url.includes("台北美食"));
+  assert.ok(!url.includes("fbclid"));
+  assert.deepStrictEqual(removed, ["fbclid"]);
+});
+
+test("只有追蹤參數的 URL 清理後不留問號", () => {
+  const { url, removed } = cleanLink("https://example.com/?utm_source=ig&fbclid=abc");
+  assert.strictEqual(url, "https://example.com/");
+  assert.deepStrictEqual(removed, ["utm_source", "fbclid"]);
+});
