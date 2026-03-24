@@ -130,7 +130,12 @@
       for (const param of rule.params) {
         const value = parsed.searchParams.get(param);
         if (value) {
-          return decodeRedirectValue(value).trim();
+          const target = decodeRedirectValue(value).trim();
+          const targetUrl = parseUrl(target);
+          if (targetUrl && !allowedProtocols.has(targetUrl.protocol)) {
+            throw new Error("跳轉目標使用不支援的協定");
+          }
+          return target;
         }
       }
 
