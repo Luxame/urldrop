@@ -71,6 +71,7 @@
       const { url, removed } = cleanLink(inputEl.value);
       renderResult(url, removed);
     } catch (error) {
+      // 安全注意：必須使用 textContent，不可改為 innerHTML，因為 error.message 可能含使用者輸入
       resultEl.textContent = error.message;
       resultEl.classList.remove("empty");
       statusEl.textContent = "";
