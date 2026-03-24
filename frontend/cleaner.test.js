@@ -86,9 +86,53 @@ test("還原 Instagram 跳轉網址並保留安全性檢查", () => {
 test("跳轉目標是非 http/https 協定會被拒絕", () => {
   assert.throws(() =>
     cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)")
-  , /不支援的網址協定/);
+  , /不支援的協定/);
 });
 
 test("缺少跳轉目標時回報錯誤", () => {
   assert.throws(() => cleanLink("https://l.facebook.com/l.php?h=abc"), /缺少目標參數/);
+});
+
+test("超過長度上限的網址會被拒絕", () => {
+  const longUrl = "https://example.com/?" + "a".repeat(8200);
+  assert.throws(() => cleanLink(longUrl), /網址長度超過上限/);
+});
+
+test("雙重編碼的 Facebook 跳轉仍能正確移除追蹤參數", () => {
+  const { url, removed } = cleanLink(
+    "https://l.facebook.com/l.php?u=https%253A%252F%252Fexample.com%252Fpage%253Ffbclid%253Dabc%2526keep%253D1"
+  );
+  assert.strictEqual(url, "https://example.com/page?keep=1");
+  assert.ok(removed.includes("fbclid"));
+});
+
+test("Facebook 跳轉目標為 javascript: 協議會被攔截", () => {
+  assert.throws(
+    () => cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)"),
+    /不支援的協定/
+  );
+});
+
+test("跳轉深度超過上限會被拒絕", () => {
+  const nested =
+    "https://l.facebook.com/l.php?u=" +
+    encodeURIComponent(
+      "https://l.facebook.com/l.php?u=" +
+        encodeURIComponent(
+          "https://l.facebook.com/l.php?u=" +
+            encodeURIComponent(
+              "https://l.facebook.com/l.php?u=" +
+                encodeURIComponent("https://example.com/")
+            )
+        )
+    );
+  assert.throws(() => cleanLink(nested), /跳轉層級過深/);
+});
+
+test("拒絕 data: 協議的網址", () => {
+  assert.throws(() => cleanLink("data:text/html,<h1>hi</h1>"), /不支援的網址協定/);
+});
+
+test("拒絕 ftp: 協議的網址", () => {
+  assert.throws(() => cleanLink("ftp://files.example.com/secret.txt"), /不支援的網址協定/);
 });
