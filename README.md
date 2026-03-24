@@ -77,6 +77,27 @@ node --test frontend/cleaner.test.js frontend/app.test.js
 - 無法解析的 URL 會直接報錯，不進行猜測性處理
 - 會移除 URL 中內嵌的帳密資訊
 - 對 FB/IG 跳轉鏈結只抽取白名單參數並限制跳轉層級
+- URL 輸入長度限制 8192 字元，防止 client-side DoS
+- 遞迴解碼跳轉目標，防止雙重編碼繞過追蹤參數移除
+
+## 部署安全建議
+
+正式部署時（如 GitHub Pages、Netlify、Nginx），建議在 HTTP response header 加入以下 Content-Security-Policy：
+
+```text
+Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src https://github.githubassets.com data:; connect-src 'none'; form-action 'none';
+```
+
+各指令說明：
+
+| 指令 | 用途 |
+|------|------|
+| `default-src 'none'` | 預設封鎖所有資源載入 |
+| `script-src 'self'` | 僅允許同源腳本 |
+| `style-src 'self' 'unsafe-inline'` | 允許同源樣式與內嵌 `<style>` |
+| `img-src https://github.githubassets.com data:` | 僅允許 GitHub CDN 圖片與 data URI |
+| `connect-src 'none'` | 禁止 fetch/XHR 對外連線 |
+| `form-action 'none'` | 防止表單被劫持提交至外部 |
 
 ## 授權
 
