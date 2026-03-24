@@ -4,6 +4,10 @@
       ? require("./tracking-params.js")
       : global.trackingConfig;
 
+  if (!config || !config.parameters || !config.prefixRules) {
+    throw new Error("追蹤參數設定檔載入失敗");
+  }
+
   const trackingParameters = new Set(
     config.parameters.map((key) => key.toLowerCase())
   );
