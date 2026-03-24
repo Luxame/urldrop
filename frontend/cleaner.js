@@ -139,6 +139,9 @@
     if (!trimmed) {
       return { url: "", removed: [] };
     }
+    if (trimmed.length > 8192) {
+      throw new Error("網址長度超過上限");
+    }
 
     let currentInput = trimmed;
     const removedParams = [];
