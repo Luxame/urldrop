@@ -8,192 +8,18 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Cpath d='M30 30h12v25c0 10 6 15 16 15s16-5 16-15V30h12v26c0 18-12 30-28 30s-28-12-28-30V30z' fill='white'/%3E%3C/svg%3E"
     />
-    <style>
-      :root {
-        color-scheme: light dark;
-        font-family: "SF Pro Display", "Noto Sans TC", system-ui, -apple-system,
-          BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
-
-      body {
-        margin: 0;
-        min-height: 100vh;
-        padding: 2rem 1rem 4rem;
-        display: flex;
-        justify-content: center;
-        background: radial-gradient(
-          circle at 20% 20%,
-          rgba(120, 113, 255, 0.14),
-          transparent 40%
-        );
-      }
-
-      .app {
-        width: min(680px, 100%);
-        background: rgba(250, 250, 252, 0.85);
-        backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 2.5rem;
-        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
-        border: 1px solid rgba(99, 102, 241, 0.15);
-        color: #0f172a;
-      }
-
-      @media (max-width: 640px) {
-        body {
-          padding: 1rem;
-        }
-
-        .app {
-          padding: 1.5rem;
-        }
-
-        .app-header {
-          flex-direction: column;
-        }
-      }
-
-      h1 {
-        margin: 0;
-        font-size: clamp(1.8rem, 4vw, 2.4rem);
-      }
-
-      .app-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-
-      .github-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        text-decoration: none;
-        color: #0f172a;
-        background: rgba(148, 163, 184, 0.2);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        border-radius: 999px;
-        padding: 0.4rem 0.75rem;
-        font-size: 0.88rem;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-
-      .github-link img {
-        width: 16px;
-        height: 16px;
-        display: block;
-      }
-
-      .github-link:hover {
-        background: rgba(148, 163, 184, 0.3);
-      }
-
-      p {
-        color: #475569;
-        margin-top: 0.5rem;
-        line-height: 1.6;
-      }
-
-      .intro {
-        margin-top: 0.5rem;
-      }
-
-      label {
-        font-weight: 600;
-        display: block;
-        margin: 1.5rem 0 0.5rem;
-        color: #0f172a;
-      }
-
-      textarea,
-      input {
-        width: 100%;
-        border-radius: 14px;
-        border: 1px solid #cbd5f5;
-        padding: 1rem 1.1rem;
-        font-size: 1rem;
-        color: inherit;
-        background: white;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        outline: none;
-      }
-
-      textarea:focus,
-      input:focus {
-        border-color: #7c3aed;
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
-      }
-
-      textarea {
-        min-height: 140px;
-        resize: vertical;
-      }
-
-      .buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-      }
-
-      button {
-        flex: 1;
-        min-width: 140px;
-        border: none;
-        border-radius: 14px;
-        padding: 0.9rem 1.1rem;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.15s, box-shadow 0.15s;
-      }
-
-      .primary {
-        background: linear-gradient(120deg, #6366f1, #8b5cf6);
-        color: white;
-        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
-      }
-
-      .neutral {
-        background: #e2e8f0;
-        color: #0f172a;
-      }
-
-      button:active {
-        transform: translateY(1px);
-        box-shadow: none;
-      }
-
-      .result {
-        margin-top: 1rem;
-        border-radius: 14px;
-        border: 1px dashed #cbd5f5;
-        padding: 1rem;
-        background: rgba(99, 102, 241, 0.05);
-        min-height: 3.2rem;
-        color: #0f172a;
-        font-size: 0.95rem;
-        word-break: break-word;
-      }
-
-      .result.empty {
-        color: #94a3b8;
-      }
-
-      .status {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        color: #0f172a;
-      }
-
-    </style>
+    <link rel="stylesheet" href="./style.css?v=20260327" />
   </head>
   <body>
     <main class="app">
       <div class="app-header">
-        <h1>移除追蹤參數，讓連結更乾淨</h1>
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 100 100" width="36" height="36" aria-hidden="true">
+            <rect width="100" height="100" rx="20" fill="#6366f1"/>
+            <path d="M30 30h12v25c0 10 6 15 16 15s16-5 16-15V30h12v26c0 18-12 30-28 30s-28-12-28-30V30z" fill="white"/>
+          </svg>
+          <h1>Urldrop</h1>
+        </div>
         <a
           class="github-link"
           href="https://github.com/Luxame/urldrop"
@@ -202,26 +28,37 @@
           aria-label="前往 Urldrop GitHub 開源專案"
           title="查看 GitHub 開源專案"
         >
-          <img
-            src="https://github.githubassets.com/favicons/favicon.svg"
-            alt="GitHub 官方 icon"
-          />
+          <svg class="github-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
           <span>GitHub</span>
         </a>
       </div>
+
+      <p class="subtitle">移除追蹤參數，讓連結更乾淨</p>
       <p class="intro">
-        貼上 IG、Threads、X、Facebook 等社群分享連結，我們會自動移除 utm、fbclid、gclid、xmt
+        貼上 IG、Threads、X、Facebook 等社群分享連結，自動移除 utm、fbclid、gclid、xmt
         這類追蹤碼，保留最純粹的網址。
       </p>
 
       <form id="cleanForm" autocomplete="off">
         <label for="inputUrl">貼上原始連結</label>
-        <textarea
-          id="inputUrl"
-          placeholder="https://www.threads.net/@example/post/abc123?xmt=..."
-          maxlength="8192"
-          spellcheck="false"
-        ></textarea>
+        <div class="input-wrap">
+          <textarea
+            id="inputUrl"
+            placeholder="https://www.threads.net/@example/post/abc123?xmt=..."
+            maxlength="8192"
+            spellcheck="false"
+          ></textarea>
+          <button class="paste-btn" id="pasteBtn" type="button" title="從剪貼簿貼上">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="2" width="6" height="4" rx="1"/>
+              <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+              <line x1="9" y1="14" x2="15" y2="14"/>
+              <line x1="9" y1="18" x2="12" y2="18"/>
+            </svg>
+          </button>
+        </div>
 
         <div class="buttons">
           <button class="primary" id="cleanBtn" type="button">
@@ -238,11 +75,21 @@
         </section>
         <div class="status" id="status"></div>
       </form>
-
     </main>
 
-    <script src="./tracking-params.js?v=20260325" defer></script>
-    <script src="./cleaner.js?v=20260325" defer></script>
-    <script src="./app.js?v=20260325" defer></script>
+    <footer class="site-footer">
+      <p>&copy; <span id="footerYear">2026</span> Urldrop &mdash; 社群追蹤碼清理工具</p>
+      <p>
+        <a
+          href="https://github.com/Luxame/urldrop"
+          target="_blank"
+          rel="noopener noreferrer"
+        >GitHub</a>
+      </p>
+    </footer>
+
+    <script src="./tracking-params.js?v=20260327" defer></script>
+    <script src="./cleaner.js?v=20260327" defer></script>
+    <script src="./app.js?v=20260327" defer></script>
   </body>
 </html>
