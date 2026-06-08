@@ -62,7 +62,9 @@ test("拒絕非 http/https 協定的網址", () => {
 });
 
 test("清除嵌入帳號密碼資訊", () => {
-  const { url, removed } = cleanLink("https://user:secret@example.com/?utm_id=1");
+  const { url, removed } = cleanLink(
+    "https://user:secret@example.com/?utm_id=1"
+  );
   assert.strictEqual(url, "https://example.com/");
   assert.deepStrictEqual(removed, ["utm_id"]);
 });
@@ -84,13 +86,17 @@ test("還原 Instagram 跳轉網址並保留安全性檢查", () => {
 });
 
 test("跳轉目標是非 http/https 協定會被拒絕", () => {
-  assert.throws(() =>
-    cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)")
-  , /不支援的協定/);
+  assert.throws(
+    () => cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)"),
+    /不支援的協定/
+  );
 });
 
 test("缺少跳轉目標時回報錯誤", () => {
-  assert.throws(() => cleanLink("https://l.facebook.com/l.php?h=abc"), /缺少目標參數/);
+  assert.throws(
+    () => cleanLink("https://l.facebook.com/l.php?h=abc"),
+    /缺少目標參數/
+  );
 });
 
 test("超過長度上限的網址會被拒絕", () => {
@@ -123,21 +129,31 @@ test("跳轉深度超過上限會被拒絕", () => {
 });
 
 test("拒絕 data: 協議的網址", () => {
-  assert.throws(() => cleanLink("data:text/html,<h1>hi</h1>"), /不支援的網址協定/);
+  assert.throws(
+    () => cleanLink("data:text/html,<h1>hi</h1>"),
+    /不支援的網址協定/
+  );
 });
 
 test("拒絕 ftp: 協議的網址", () => {
-  assert.throws(() => cleanLink("ftp://files.example.com/secret.txt"), /不支援的網址協定/);
+  assert.throws(
+    () => cleanLink("ftp://files.example.com/secret.txt"),
+    /不支援的網址協定/
+  );
 });
 
 test("接近長度上限的 URL 能正常處理", () => {
   const longParam = "a".repeat(8000);
-  const { url } = cleanLink(`https://example.com/?keep=${longParam}&utm_source=x`);
+  const { url } = cleanLink(
+    `https://example.com/?keep=${longParam}&utm_source=x`
+  );
   assert.strictEqual(url, `https://example.com/?keep=${longParam}`);
 });
 
 test("Unicode / IDN 網域名稱能正常清理", () => {
-  const { url, removed } = cleanLink("https://例え.jp/path?utm_source=tw&keep=1");
+  const { url, removed } = cleanLink(
+    "https://例え.jp/path?utm_source=tw&keep=1"
+  );
   assert.ok(url.includes("keep=1"));
   assert.ok(!url.includes("utm_source"));
   assert.deepStrictEqual(removed, ["utm_source"]);
@@ -157,13 +173,17 @@ test("參數值包含中文能正常保留", () => {
   const { url, removed } = cleanLink(
     "https://example.com/search?q=台北美食&fbclid=abc123"
   );
-  assert.ok(url.includes(encodeURIComponent("台北美食")) || url.includes("台北美食"));
+  assert.ok(
+    url.includes(encodeURIComponent("台北美食")) || url.includes("台北美食")
+  );
   assert.ok(!url.includes("fbclid"));
   assert.deepStrictEqual(removed, ["fbclid"]);
 });
 
 test("只有追蹤參數的 URL 清理後不留問號", () => {
-  const { url, removed } = cleanLink("https://example.com/?utm_source=ig&fbclid=abc");
+  const { url, removed } = cleanLink(
+    "https://example.com/?utm_source=ig&fbclid=abc"
+  );
   assert.strictEqual(url, "https://example.com/");
   assert.deepStrictEqual(removed, ["utm_source", "fbclid"]);
 });

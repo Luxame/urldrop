@@ -1,8 +1,14 @@
 /* === Reset & Tokens === */
 :root {
   color-scheme: light dark;
-  font-family: "SF Pro Display", "Noto Sans TC", system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    "SF Pro Display",
+    "Noto Sans TC",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 
   --c-bg: #f0f0f5;
   --c-surface: rgba(255, 255, 255, 0.82);
@@ -62,8 +68,16 @@ body {
   padding: 2.5rem 1rem 0;
   background-color: var(--c-bg);
   background-image:
-    radial-gradient(circle at 20% 10%, rgba(99, 102, 241, 0.12), transparent 45%),
-    radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.08), transparent 40%);
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(99, 102, 241, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 90%,
+      rgba(139, 92, 246, 0.08),
+      transparent 40%
+    );
   color: var(--c-text);
 }
 
@@ -144,7 +158,9 @@ h1 {
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
 .github-link:hover {
@@ -178,7 +194,9 @@ textarea {
   font-family: inherit;
   color: var(--c-text);
   background: var(--c-surface-hover);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   outline: none;
   min-height: 130px;
   resize: vertical;
@@ -207,7 +225,10 @@ textarea::placeholder {
   background: var(--c-surface);
   color: var(--c-text-muted);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
   padding: 0;
   flex: none;
   min-width: 0;
@@ -237,7 +258,10 @@ button {
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s, background 0.2s;
+  transition:
+    transform 0.12s,
+    box-shadow 0.15s,
+    background 0.2s;
 }
 
 button:active {
@@ -278,7 +302,9 @@ button:active {
   color: var(--c-text);
   font-size: 0.95rem;
   word-break: break-all;
-  transition: border-color 0.3s, background 0.3s;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
 }
 
 .result.empty {
