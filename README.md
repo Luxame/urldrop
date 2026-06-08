@@ -69,6 +69,22 @@ https://example.com/path?keep=1
 ```bash
 # 在 repo 根目錄執行
 node --test frontend/cleaner.test.js frontend/app.test.js
+
+# 或使用 npm script
+npm test
+```
+
+## 程式碼風格
+
+本專案使用 [ESLint](https://eslint.org/)（靜態檢查）與 [Prettier](https://prettier.io/)（格式化）維持一致的程式碼風格。
+
+```bash
+npm install        # 首次需安裝開發相依套件
+
+npm run lint       # 檢查程式碼問題
+npm run lint:fix   # 自動修正可修復的問題
+npm run format     # 依 Prettier 規則格式化所有檔案
+npm run format:check  # 僅檢查格式（不修改檔案，適合 CI）
 ```
 
 ## 安全設計摘要
@@ -90,14 +106,14 @@ Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'
 
 各指令說明：
 
-| 指令 | 用途 |
-|------|------|
-| `default-src 'none'` | 預設封鎖所有資源載入 |
-| `script-src 'self'` | 僅允許同源腳本 |
-| `style-src 'self' 'unsafe-inline'` | 允許同源樣式與內嵌 `<style>` |
+| 指令                                            | 用途                              |
+| ----------------------------------------------- | --------------------------------- |
+| `default-src 'none'`                            | 預設封鎖所有資源載入              |
+| `script-src 'self'`                             | 僅允許同源腳本                    |
+| `style-src 'self' 'unsafe-inline'`              | 允許同源樣式與內嵌 `<style>`      |
 | `img-src https://github.githubassets.com data:` | 僅允許 GitHub CDN 圖片與 data URI |
-| `connect-src 'none'` | 禁止 fetch/XHR 對外連線 |
-| `form-action 'none'` | 防止表單被劫持提交至外部 |
+| `connect-src 'none'`                            | 禁止 fetch/XHR 對外連線           |
+| `form-action 'none'`                            | 防止表單被劫持提交至外部          |
 
 ## 授權
 
