@@ -61,15 +61,33 @@
     }
   }
 
-  function removeTrackingFragment(hash) {
-    if (!hash || hash.length <= 1) return hash;
-    const fragment = hash.substring(1);
-    const parts = fragment.split("&").filter((item) => item);
+  function cleanFragmentQuery(query) {
+    const parts = query.split("&").filter((item) => item);
     const cleaned = parts.filter((item) => {
       const [key] = item.split("=");
       return !shouldRemoveParam(key);
     });
-    return cleaned.length ? `#${cleaned.join("&")}` : "";
+    return cleaned.join("&");
+  }
+
+  function removeTrackingFragment(hash) {
+    if (!hash || hash.length <= 1) return hash;
+    const fragment = hash.substring(1);
+
+    const queryIndex = fragment.indexOf("?");
+    if (queryIndex !== -1) {
+      // SPA hash 路由格式：#/path?key=value&key=value，只清理 ? 之後的查詢字串
+      const pathPart = fragment.slice(0, queryIndex);
+      const cleanedQuery = cleanFragmentQuery(fragment.slice(queryIndex + 1));
+      if (cleanedQuery) {
+        return `#${pathPart}?${cleanedQuery}`;
+      }
+      return pathPart ? `#${pathPart}` : "";
+    }
+
+    // 傳統格式：整段 fragment 視為 key=value&key=value
+    const cleanedQuery = cleanFragmentQuery(fragment);
+    return cleanedQuery ? `#${cleanedQuery}` : "";
   }
 
   function decodeRedirectValue(value) {

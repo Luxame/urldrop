@@ -31,6 +31,30 @@ test("片段追蹤碼也會移除並避免重複記錄", () => {
   assert.deepStrictEqual(removed, ["utm_id", "ref"]);
 });
 
+test("SPA hash 路由格式 (#/path?query) 中的追蹤碼會被移除", () => {
+  const { url } = cleanLink(
+    "https://app.example.com/#/dashboard?utm_source=newsletter&id=42"
+  );
+  assert.strictEqual(url, "https://app.example.com/#/dashboard?id=42");
+});
+
+test("SPA hash 路由中的 fbclid 會被移除並保留非追蹤參數", () => {
+  const { url } = cleanLink("https://example.com/#/post/123?fbclid=abc&keep=1");
+  assert.strictEqual(url, "https://example.com/#/post/123?keep=1");
+});
+
+test("SPA hash 路由僅含追蹤碼時清理後保留路徑並移除問號", () => {
+  const { url } = cleanLink(
+    "https://example.com/#/reel?igshid=foo&utm_content=x"
+  );
+  assert.strictEqual(url, "https://example.com/#/reel");
+});
+
+test("純 hash 路徑 (無 query) 不受影響", () => {
+  const { url } = cleanLink("https://example.com/#/settings");
+  assert.strictEqual(url, "https://example.com/#/settings");
+});
+
 test("自動補完整網址並保留非追蹤參數", () => {
   const { url, removed } = cleanLink("example.com/post?id=42&igshid=abc");
   assert.strictEqual(url, "https://example.com/post?id=42");
