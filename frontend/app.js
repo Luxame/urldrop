@@ -45,10 +45,10 @@
     if (removed.length) {
       // 安全注意：使用 DOM API 建立元素，不可使用 innerHTML
       statusEl.textContent = "";
-      var prefix = document.createTextNode("已移除參數：");
+      const prefix = document.createTextNode("已移除參數：");
       statusEl.appendChild(prefix);
-      removed.forEach(function (param, i) {
-        var tag = document.createElement("span");
+      removed.forEach(function (param) {
+        const tag = document.createElement("span");
         tag.className = "removed-tag";
         tag.textContent = param;
         statusEl.appendChild(tag);
@@ -60,8 +60,8 @@
 
   function handleClean() {
     try {
-      var value = inputEl.value;
-      var result = cleanLink(value);
+      const value = inputEl.value;
+      const result = cleanLink(value);
       renderResult(result.url, result.removed);
     } catch (error) {
       // 安全注意：必須使用 textContent，不可改為 innerHTML，因為 error.message 可能含使用者輸入
@@ -72,22 +72,20 @@
     }
   }
 
-  document
-    .getElementById("cleanBtn")
-    .addEventListener("click", function () { handleClean(); });
+  document.getElementById("cleanBtn").addEventListener("click", function () {
+    handleClean();
+  });
 
-  document
-    .getElementById("clearBtn")
-    .addEventListener("click", function () {
-      inputEl.value = "";
-      resetUI();
-      inputEl.focus();
-    });
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    inputEl.value = "";
+    resetUI();
+    inputEl.focus();
+  });
 
   document
     .getElementById("copyBtn")
     .addEventListener("click", async function () {
-      var text = resultEl.classList.contains("empty")
+      const text = resultEl.classList.contains("empty")
         ? ""
         : resultEl.textContent;
       if (!text) {
@@ -104,11 +102,11 @@
     });
 
   // Paste button — read from clipboard
-  var pasteBtn = document.getElementById("pasteBtn");
+  const pasteBtn = document.getElementById("pasteBtn");
   if (pasteBtn) {
     pasteBtn.addEventListener("click", async function () {
       try {
-        var text = await navigator.clipboard.readText();
+        const text = await navigator.clipboard.readText();
         inputEl.value = text;
         handleClean();
       } catch (error) {
@@ -120,6 +118,8 @@
 
   // Auto-clean on paste into textarea
   inputEl.addEventListener("paste", function () {
-    setTimeout(function () { handleClean(); }, 0);
+    setTimeout(function () {
+      handleClean();
+    }, 0);
   });
 })();
