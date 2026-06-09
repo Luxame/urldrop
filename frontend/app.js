@@ -28,48 +28,106 @@
     statusEl.textContent = "";
   }
 
-  function renderResult(cleaned, removed) {
-    if (!cleaned) {
-      resultEl.textContent = "請先貼上要處理的連結";
-      resultEl.classList.add("empty");
-      resultEl.classList.remove("has-result");
-      statusEl.textContent = "";
+  function renderEmpty(message) {
+    resultEl.textContent = message;
+    resultEl.classList.add("empty");
+    resultEl.classList.remove("has-result");
+    statusEl.textContent = "";
+  }
+
+  function buildStatus(perLine) {
+    // 安全注意：使用 DOM API 建立元素，不可使用 innerHTML
+    statusEl.textContent = "";
+
+    const totalRemoved = perLine.reduce((n, r) => n + r.removed.length, 0);
+    const errorCount = perLine.filter((r) => r.error).length;
+    const lineCount = perLine.length;
+
+    if (totalRemoved === 0 && errorCount === 0) {
+      statusEl.textContent = "沒有發現需要移除的追蹤參數";
       return;
     }
 
-    // 安全注意：使用 textContent，不可改為 innerHTML，因為 cleaned 含使用者輸入
-    resultEl.textContent = cleaned;
-    resultEl.classList.remove("empty");
-    resultEl.classList.add("has-result");
+    if (totalRemoved > 0) {
+      const summary =
+        lineCount > 1
+          ? "共 " +
+            lineCount +
+            " 條連結，移除 " +
+            totalRemoved +
+            " 項追蹤參數："
+          : "已移除參數：";
+      statusEl.appendChild(document.createTextNode(summary));
 
-    if (removed.length) {
-      // 安全注意：使用 DOM API 建立元素，不可使用 innerHTML
-      statusEl.textContent = "";
-      const prefix = document.createTextNode("已移除參數：");
-      statusEl.appendChild(prefix);
-      removed.forEach(function (param) {
-        const tag = document.createElement("span");
-        tag.className = "removed-tag";
-        tag.textContent = param;
-        statusEl.appendChild(tag);
+      const seen = new Set();
+      perLine.forEach(function (r) {
+        r.removed.forEach(function (key) {
+          if (seen.has(key)) return;
+          seen.add(key);
+          const tag = document.createElement("span");
+          tag.className = "removed-tag";
+          tag.textContent = key;
+          statusEl.appendChild(tag);
+        });
       });
-    } else {
-      statusEl.textContent = "沒有發現需要移除的追蹤參數";
+    }
+
+    if (errorCount > 0) {
+      const errTag = document.createElement("span");
+      errTag.className = "error-tag";
+      errTag.textContent =
+        (totalRemoved > 0 ? "（" : "") +
+        errorCount +
+        " 條無法處理" +
+        (totalRemoved > 0 ? "）" : "");
+      statusEl.appendChild(errTag);
     }
   }
 
   function handleClean() {
-    try {
-      const value = inputEl.value;
-      const result = cleanLink(value);
-      renderResult(result.url, result.removed);
-    } catch (error) {
-      // 安全注意：必須使用 textContent，不可改為 innerHTML，因為 error.message 可能含使用者輸入
-      resultEl.textContent = error.message;
-      resultEl.classList.remove("empty");
-      resultEl.classList.remove("has-result");
-      statusEl.textContent = "";
+    const lines = inputEl.value
+      .split(/\r?\n/)
+      .map(function (line) {
+        return line.trim();
+      })
+      .filter(function (line) {
+        return line.length > 0;
+      });
+
+    if (lines.length === 0) {
+      renderEmpty("請先貼上要處理的連結");
+      return;
     }
+
+    const perLine = lines.map(function (line) {
+      try {
+        const result = cleanLink(line);
+        return {
+          original: line,
+          cleaned: result.url,
+          removed: result.removed,
+          error: null,
+        };
+      } catch (error) {
+        return {
+          original: line,
+          cleaned: "",
+          removed: [],
+          error: error.message,
+        };
+      }
+    });
+
+    // 安全注意：使用 textContent，不可改為 innerHTML，因為內容含使用者輸入
+    resultEl.textContent = perLine
+      .map(function (r) {
+        return r.error ? "⚠ " + r.error + "：" + r.original : r.cleaned;
+      })
+      .join("\n");
+    resultEl.classList.remove("empty");
+    resultEl.classList.add("has-result");
+
+    buildStatus(perLine);
   }
 
   document.getElementById("cleanBtn").addEventListener("click", function () {

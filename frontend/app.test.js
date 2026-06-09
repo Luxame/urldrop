@@ -187,3 +187,79 @@ test("textarea paste 事件觸發自動清理", () => {
 
   cleanup();
 });
+
+test("批次清理：多行 URL 逐行輸出清理結果", () => {
+  const { elements, cleanup } = setupDom();
+
+  elements.inputUrl.value =
+    "https://example.com/?utm_source=a&keep=1\nhttps://example.com/p?fbclid=b";
+  elements.cleanBtn.listeners.click();
+
+  assert.strictEqual(
+    elements.result.textContent,
+    "https://example.com/?keep=1\nhttps://example.com/p"
+  );
+  assert.ok(!elements.result.classList.contains("empty"));
+
+  cleanup();
+});
+
+test("批次清理：狀態列彙總連結數與移除參數", () => {
+  const { elements, cleanup } = setupDom();
+
+  elements.inputUrl.value =
+    "https://example.com/?utm_source=a\nhttps://example.com/p?fbclid=b";
+  elements.cleanBtn.listeners.click();
+
+  const statusText = elements.status.childNodes
+    .map((n) => n.textContent)
+    .join("");
+  assert.ok(statusText.includes("共 2 條連結"));
+  assert.ok(statusText.includes("utm_source"));
+  assert.ok(statusText.includes("fbclid"));
+
+  cleanup();
+});
+
+test("批次清理：無效連結以警告標示且不影響其他行", () => {
+  const { elements, cleanup } = setupDom();
+
+  elements.inputUrl.value = "::::\nhttps://example.com/?utm_source=a&keep=1";
+  elements.cleanBtn.listeners.click();
+
+  const lines = elements.result.textContent.split("\n");
+  assert.ok(lines[0].startsWith("⚠"));
+  assert.strictEqual(lines[1], "https://example.com/?keep=1");
+
+  const statusText = elements.status.childNodes
+    .map((n) => n.textContent)
+    .join("");
+  assert.ok(statusText.includes("1 條無法處理"));
+
+  cleanup();
+});
+
+test("單行清理：狀態列以標籤顯示已移除參數", () => {
+  const { elements, cleanup } = setupDom();
+
+  elements.inputUrl.value = "https://example.com/?utm_source=a&keep=1";
+  elements.cleanBtn.listeners.click();
+
+  const tags = elements.status.childNodes.filter(
+    (n) => n.className === "removed-tag"
+  );
+  assert.ok(tags.some((t) => t.textContent === "utm_source"));
+
+  cleanup();
+});
+
+test("無追蹤參數時狀態列顯示提示", () => {
+  const { elements, cleanup } = setupDom();
+
+  elements.inputUrl.value = "https://example.com/?keep=1";
+  elements.cleanBtn.listeners.click();
+
+  assert.strictEqual(elements.status.textContent, "沒有發現需要移除的追蹤參數");
+
+  cleanup();
+});
