@@ -109,6 +109,46 @@ test("還原 Instagram 跳轉網址並保留安全性檢查", () => {
   assert.deepStrictEqual(removed, ["igshid", "utm_content"]);
 });
 
+test("還原 Google 搜尋跳轉網址並移除追蹤碼", () => {
+  const target =
+    "https://example.com/article?utm_source=google&gclid=xxx&keep=1";
+  const { url, removed } = cleanLink(
+    "https://www.google.com/url?sa=t&url=" + encodeURIComponent(target)
+  );
+  assert.strictEqual(url, "https://example.com/article?keep=1");
+  assert.deepStrictEqual(removed, ["utm_source", "gclid"]);
+});
+
+test("還原 YouTube 外連跳轉網址並移除追蹤碼", () => {
+  const target = "https://example.com/?utm_source=yt&keep=1";
+  const { url, removed } = cleanLink(
+    "https://www.youtube.com/redirect?event=video_description&q=" +
+      encodeURIComponent(target)
+  );
+  assert.strictEqual(url, "https://example.com/?keep=1");
+  assert.deepStrictEqual(removed, ["utm_source"]);
+});
+
+test("還原 Reddit 外連跳轉網址並移除追蹤碼", () => {
+  const target = "https://example.com/page?utm_campaign=reddit&keep=1";
+  const { url, removed } = cleanLink(
+    "https://out.reddit.com/t3_abc?url=" +
+      encodeURIComponent(target) +
+      "&token=xyz"
+  );
+  assert.strictEqual(url, "https://example.com/page?keep=1");
+  assert.deepStrictEqual(removed, ["utm_campaign"]);
+});
+
+test("還原 Steam linkfilter 跳轉網址並移除追蹤碼", () => {
+  const target = "https://example.com/?utm_source=steam&keep=1";
+  const { url, removed } = cleanLink(
+    "https://steamcommunity.com/linkfilter/?url=" + encodeURIComponent(target)
+  );
+  assert.strictEqual(url, "https://example.com/?keep=1");
+  assert.deepStrictEqual(removed, ["utm_source"]);
+});
+
 test("跳轉目標是非 http/https 協定會被拒絕", () => {
   assert.throws(
     () => cleanLink("https://l.facebook.com/l.php?u=javascript:alert(1)"),

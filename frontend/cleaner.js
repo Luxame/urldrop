@@ -37,6 +37,26 @@
         pathname === "/sharer.php" || pathname === "/share.php",
       params: ["u", "href", "url", "link"],
     },
+    {
+      hosts: new Set(["www.google.com", "google.com"]),
+      pathMatches: (pathname) => pathname === "/url",
+      params: ["q", "url"],
+    },
+    {
+      hosts: new Set(["www.youtube.com"]),
+      pathMatches: (pathname) => pathname === "/redirect",
+      params: ["q"],
+    },
+    {
+      hosts: new Set(["out.reddit.com"]),
+      pathMatches: () => true,
+      params: ["url"],
+    },
+    {
+      hosts: new Set(["steamcommunity.com"]),
+      pathMatches: (pathname) => pathname === "/linkfilter/",
+      params: ["url"],
+    },
   ];
 
   function shouldRemoveParam(name) {
@@ -130,7 +150,7 @@
         }
       }
 
-      throw new Error("偵測到 FB/IG 跳轉網址但缺少目標參數");
+      throw new Error("偵測到跳轉網址但缺少目標參數");
     }
 
     return null;
@@ -184,7 +204,7 @@
       }
 
       if (!redirectTarget) {
-        throw new Error("偵測到 FB/IG 跳轉網址但未提供有效的目標連結");
+        throw new Error("偵測到跳轉網址但未提供有效的目標連結");
       }
 
       currentInput = redirectTarget;
