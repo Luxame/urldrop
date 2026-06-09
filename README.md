@@ -7,7 +7,9 @@
 ## 功能特色
 
 - 移除常見追蹤參數與前綴規則參數（如 `utm_`、`pk_`、`ga_`）
-- 支援清理 URL fragment（`#...`）中的追蹤片段
+- 支援清理 URL fragment（`#...`）中的追蹤片段，包含 SPA hash 路由格式（`#/path?utm_...`）
+- 一次貼上多行連結即可批次清理，逐行輸出並彙總移除統計
+- 還原中介跳轉連結並清理目標網址的追蹤碼：Facebook、Instagram、Google（`/url`）、YouTube（`/redirect`）、Reddit（`out.reddit.com`）、Steam（`/linkfilter/`）
 - 自動補齊沒有協定的網址（例如 `example.com` 會補成 `https://example.com`）
 - 自動清除 URL 中的帳號密碼資訊（`username:password@host`）
 
@@ -16,11 +18,13 @@
 ```text
 urldrop/
 ├─ frontend/
-│  ├─ index.html       # UI
-│  ├─ app.js           # UI 事件與互動邏輯
-│  ├─ cleaner.js       # URL 清理核心邏輯
-│  ├─ app.test.js      # UI 邏輯測試
-│  └─ cleaner.test.js  # 清理核心測試
+│  ├─ index.html          # UI
+│  ├─ style.css           # 樣式（含淺色/深色模式）
+│  ├─ app.js              # UI 事件與互動邏輯
+│  ├─ cleaner.js          # URL 清理核心邏輯
+│  ├─ tracking-params.js  # 追蹤參數設定檔
+│  ├─ app.test.js         # UI 邏輯測試
+│  └─ cleaner.test.js     # 清理核心測試
 ├─ .gitignore
 ├─ LICENSE
 └─ README.md
